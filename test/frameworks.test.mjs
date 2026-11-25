@@ -156,3 +156,13 @@ describe('fastify', () => {
     assert.deepEqual(reply.payload, { error: 'captcha_failed', code: 'token_already_used' });
   });
 });
+
+describe('userMessage', async () => {
+  const { userMessage } = await import('../dist/esm/index.js');
+  test('known, unknown and empty codes', () => {
+    assert.match(userMessage('token_expired'), /refresh/);
+    assert.match(userMessage('hostname_mismatch'), /different site/);
+    assert.equal(userMessage('something_new'), userMessage(null));
+    assert.equal(userMessage(''), userMessage(undefined));
+  });
+});

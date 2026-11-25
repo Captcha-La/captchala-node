@@ -30,4 +30,7 @@ check('public always-pass test key', pass.valid && pass.test, `riskLevel=${pass.
 const fail = await new CaptchaLaClient({ appKey: 'test_fail_2d9e6b4a0c7f1835', appSecret: 'test_secret_fail_9b5f03e7d1a46c28', baseUrl }).validate('pt_anything');
 check('public always-fail test key', !fail.valid && fail.error === 'test_always_fail');
 
+const swapped = await new CaptchaLaClient({ appKey: 'test_pass_7f3c9a2e5b18d4f6', appSecret: 'test_secret_fail_9b5f03e7d1a46c28', baseUrl }).validate('pt_anything');
+check('test key with wrong secret -> invalid_app_secret', !swapped.valid && swapped.error === 'invalid_app_secret' && swapped.cause?.name === 'AuthenticationError');
+
 process.exit(failed ? 1 : 0);

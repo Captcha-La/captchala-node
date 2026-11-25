@@ -41,5 +41,6 @@ export {
   ValidationFailedError,
 } from './errors.js';
 export { clientIpFromHeaders } from './guard.js';
+export { userMessage } from './messages.js';
 export type { FetchLike } from './http.js';
 export { VERSION } from './version.js';
