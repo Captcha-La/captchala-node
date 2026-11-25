@@ -86,6 +86,7 @@ const result = await captchala.validate(req.body.captcha_token, {
 |---|---|---|
 | `valid` | `boolean` | Whether validation passed. The only field to gate on |
 | `error` | `string \| null` | Error code, e.g. `token_expired`, `action_mismatch`, `request_failed` |
+| `message` | `string \| null` | Human-readable API message, for API-level errors |
 | `action` | `string \| null` | Business action of the token |
 | `uid` | `string \| null` | User ID bound via `bindUid` at issue |
 | `challengeId` | `string \| null` | Challenge ID |
@@ -156,6 +157,10 @@ const t = await captchala.moderationText('user comment here');
 ```
 
 `ModerationResult`: `ok`, `flagged`, `categories`, `categoryScores`, `contentType`, `raw`, `error`, `message`, `hasCategory(...names)`. Categories depend on the model, so iterate them defensively.
+
+### `userMessage(code)`
+
+A short, user-safe English message for an error code, for form errors (`"CAPTCHA expired or was already used. Please refresh and try again."`). Never show raw codes to end users. Unknown codes fall back to a generic message.
 
 ## Errors, retries and timeouts
 

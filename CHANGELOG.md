@@ -31,4 +31,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Framework helpers as subpath exports with no framework dependency:
   `@captcha-la/node/express`, `@captcha-la/node/next` (App Router),
   `@captcha-la/node/fastify`.
+- `userMessage()` for user-safe error text, `clientIpFromHeaders()`.
 - ESM and CommonJS builds with type declarations. Zero runtime dependencies.

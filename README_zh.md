@@ -86,6 +86,7 @@ const result = await captchala.validate(req.body.captcha_token, {
 |---|---|---|
 | `valid` | `boolean` | 是否通过。唯一应当用于放行判断的字段 |
 | `error` | `string \| null` | 错误码，例如 `token_expired`、`action_mismatch`、`request_failed` |
+| `message` | `string \| null` | API 级错误的可读信息 |
 | `action` | `string \| null` | 令牌对应的业务 action |
 | `uid` | `string \| null` | 签发时通过 `bindUid` 绑定的用户 ID |
 | `challengeId` | `string \| null` | 挑战 ID |
@@ -156,6 +157,10 @@ const t = await captchala.moderationText('user comment here');
 ```
 
 `ModerationResult`：`ok`、`flagged`、`categories`、`categoryScores`、`contentType`、`raw`、`error`、`message`、`hasCategory(...names)`。类别集合取决于模型，请不要写死。
+
+### `userMessage(code)`
+
+为错误码返回一条可以展示给终端用户的简短英文提示，用于表单错误。切勿向用户展示原始错误码；未知错误码返回通用提示。
 
 ## 错误、重试与超时
 

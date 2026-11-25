@@ -47,6 +47,7 @@ interface FailureMeta {
 export interface ValidateResultInit extends FailureMeta {
   valid: boolean;
   error?: string | null;
+  message?: string | null;
   warning?: string | null;
   offline?: boolean;
   clientOnly?: boolean;
@@ -73,6 +74,8 @@ export class ValidateResult {
   readonly valid: boolean;
   /** Error code when `valid` is false, e.g. `token_expired`, `action_mismatch`, `request_failed`. */
   readonly error: string | null;
+  /** Human-readable message from the API, for API-level errors. */
+  readonly message: string | null;
   /** Warning, e.g. for client-only tokens. */
   readonly warning: string | null;
   /** True for tokens verified through the backup service (`offline_`) or client-only tokens. */
@@ -119,6 +122,7 @@ export class ValidateResult {
   constructor(init: ValidateResultInit) {
     this.valid = init.valid;
     this.error = init.error ?? null;
+    this.message = init.message ?? null;
     this.warning = init.warning ?? null;
     this.offline = init.offline ?? false;
     this.clientOnly = init.clientOnly ?? false;
