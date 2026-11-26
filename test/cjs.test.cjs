@@ -9,7 +9,7 @@ const { captchalaPreHandler } = require('../dist/cjs/fastify.js');
 test('cjs exports', async () => {
   assert.equal(typeof sdk.CaptchaLaClient, 'function');
   assert.equal(sdk.Client, sdk.CaptchaLaClient);
-  assert.equal(sdk.VERSION, '1.0.0');
+  assert.equal(sdk.VERSION, require('../package.json').version);
   assert.equal(typeof captchala, 'function');
   assert.equal(typeof withCaptchaLa, 'function');
   assert.equal(typeof captchalaPreHandler, 'function');
