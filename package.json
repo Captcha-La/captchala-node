@@ -1,6 +1,6 @@
 {
   "name": "@captcha-la/node",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Official CaptchaLa server-side SDK for Node.js: validate CAPTCHA pass tokens, issue server tokens, moderate content. Zero dependencies.",
   "type": "module",
   "main": "./dist/cjs/index.js",

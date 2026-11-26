@@ -17,6 +17,9 @@ import {
   textItem,
 } from '../dist/esm/index.js';
 import { connRefused, connReset, hang, mockFetch, ok, reply } from './helpers.mjs';
+import { readFileSync } from 'node:fs';
+
+const PKG_VERSION = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version;
 
 const make = (fetch, extra = {}) =>
   new CaptchaLaClient({ appKey: 'key_1', appSecret: 'secret_1', fetch, retryBackoffMs: 0, ...extra });
@@ -88,7 +91,7 @@ describe('validate', () => {
     assert.equal(c.headers.get('x-app-key'), 'key_1');
     assert.equal(c.headers.get('x-app-secret'), 'secret_1');
     assert.equal(c.headers.get('content-type'), 'application/json');
-    assert.match(c.headers.get('user-agent'), /^captchala-node\/1\.0\.0$/);
+    assert.equal(c.headers.get('user-agent'), `captchala-node/${PKG_VERSION}`);
     assert.deepEqual(c.body, { pass_token: 'pt_abc', keep_token: false });
   });
 
