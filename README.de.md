@@ -48,7 +48,6 @@ CommonJS funktioniert ebenfalls: `const { CaptchaLaClient } = require('@captcha-
 |---|---|---|
 | `appKey` | `process.env.CAPTCHALA_APP_KEY` | App Key (aus dem Dashboard) |
 | `appSecret` | `process.env.CAPTCHALA_APP_SECRET` | App Secret (aus dem Dashboard). Nur serverseitig |
-| `baseUrl` | `https://verify.captcha.la` | Basis-URL der API |
 | `timeoutMs` | `5000` | Timeout pro Versuch, in Millisekunden |
 | `maxRetries` | `2` | Wiederholungen nach dem ersten Versuch (`0` deaktiviert sie) |
 | `retryBackoffMs` | `200` | Basisverzögerung für exponentiellen Backoff |

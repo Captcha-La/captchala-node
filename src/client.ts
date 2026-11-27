@@ -10,9 +10,11 @@ import {
 } from './results.js';
 import { VERSION } from './version.js';
 
-export const DEFAULT_BASE_URL = 'https://verify.captcha.la';
+const API_URL = 'https://verify.captcha.la';
 /** Backup service that verifies `offline_` tokens issued during a service disruption. */
-export const DEFAULT_BACKUP_URL = 'https://fallbackapiv1.captchala.com';
+const BACKUP_URL = 'https://fallbackapiv1.captchala.com';
+const VALIDATE_URL = `${API_URL}/v1/validate`;
+const BACKUP_VALIDATE_URL = `${BACKUP_URL}/api/validate`;
 
 export const PREFIX_MAIN = 'pt_';
 export const PREFIX_OFFLINE = 'offline_';
@@ -92,10 +94,6 @@ export interface ClientOptions {
   appKey?: string;
   /** App Secret from the dashboard. Server-side only. Defaults to `process.env.CAPTCHALA_APP_SECRET`. */
   appSecret?: string;
-  /** API base URL. Default `https://verify.captcha.la`. */
-  baseUrl?: string;
-  /** Base URL of the backup service for `offline_` tokens. */
-  backupUrl?: string;
   /** Per-attempt timeout in milliseconds. Default 5000. */
   timeoutMs?: number;
   /** Retries after the first attempt. Default 2. Set 0 to disable. */
@@ -185,8 +183,6 @@ export function resetReachabilityCache(): void {
  */
 export class CaptchaLaClient {
   readonly appKey: string;
-  readonly baseUrl: string;
-  readonly backupUrl: string;
   readonly rejectClientOnly: boolean;
   readonly #appSecret: string;
   readonly #transport: TransportConfig;
@@ -203,8 +199,6 @@ export class CaptchaLaClient {
     }
     this.appKey = appKey;
     this.#appSecret = appSecret;
-    this.baseUrl = (options.baseUrl ?? DEFAULT_BASE_URL).replace(/\/+$/, '');
-    this.backupUrl = (options.backupUrl ?? DEFAULT_BACKUP_URL).replace(/\/+$/, '');
     this.rejectClientOnly = options.rejectClientOnly ?? false;
     this.#transport = {
       fetch: fetchImpl,
@@ -216,15 +210,6 @@ export class CaptchaLaClient {
     };
   }
 
-  /** Endpoint that validates `pt_` / `dg_` tokens. */
-  get validateUrl(): string {
-    return `${this.baseUrl}/v1/validate`;
-  }
-
-  /** Endpoint that validates `offline_` tokens. */
-  get backupValidateUrl(): string {
-    return `${this.backupUrl}/api/validate`;
-  }
 
   /**
    * Validate a pass token from the client SDK. Never throws for verification,
@@ -237,7 +222,7 @@ export class CaptchaLaClient {
     if (isClientOnlyToken(token)) return this.#validateClientOnly();
 
     const offline = token.startsWith(PREFIX_OFFLINE);
-    const url = offline ? this.backupValidateUrl : this.validateUrl;
+    const url = offline ? BACKUP_VALIDATE_URL : VALIDATE_URL;
     const body: Record<string, unknown> = { pass_token: token, keep_token: options.keepToken ?? false };
     if (options.clientIp) body['client_ip'] = options.clientIp;
     if (options.expectedAction) body['expected_action'] = options.expectedAction;
@@ -329,7 +314,7 @@ export class CaptchaLaClient {
 
     let r: RawResponse;
     try {
-      r = await send(this.#transport, `${this.baseUrl}/v1/server/challenge/issue`, body, {
+      r = await send(this.#transport, `${API_URL}/v1/server/challenge/issue`, body, {
         retryAmbiguous: true,
         signal: options.signal,
       });
@@ -373,7 +358,7 @@ export class CaptchaLaClient {
     let r: RawResponse;
     try {
       // Not retried after a timeout: the content may already be processing.
-      r = await send(this.#transport, `${this.baseUrl}${path}`, body, { retryAmbiguous: false, signal: options.signal });
+      r = await send(this.#transport, `${API_URL}${path}`, body, { retryAmbiguous: false, signal: options.signal });
     } catch (e) {
       return new ModerationResult({ ok: false, ...networkFailure(e) });
     }
@@ -411,14 +396,14 @@ export class CaptchaLaClient {
         warning: 'Client-only token rejected: client-only tokens are disabled for this client',
       });
     }
-    if (await this.#probe(this.validateUrl)) {
+    if (await this.#probe(VALIDATE_URL)) {
       return new ValidateResult({
         ...base,
         error: ERROR_CLIENT_ONLY_REJECTED,
         warning: 'Client-only token rejected: main API is reachable',
       });
     }
-    if (await this.#probe(this.backupValidateUrl)) {
+    if (await this.#probe(BACKUP_VALIDATE_URL)) {
       return new ValidateResult({
         ...base,
         error: ERROR_CLIENT_ONLY_REJECTED,

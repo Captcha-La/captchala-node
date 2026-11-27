@@ -9,13 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 - README in Japanese, Korean, Spanish, Portuguese (BR) and German, with a language switcher in every README.
-- Build: `package.json` is the only place the version is set; `src/version.ts` is generated from it. No runtime changes.
+- Validation, token issuing and moderation always use the CaptchaLa API endpoints.
+- Build: `package.json` is the only place the version is set; `src/version.ts` is generated from it.
 
 ## [1.0.0] - 2026-11-26
 
 ### Added
 - `CaptchaLaClient` with `validate()`, `issueServerToken()`, `moderationCheck()`
-  and `moderationText()`. Default base URL `https://verify.captcha.la`.
+  and `moderationText()`, calling `https://verify.captcha.la`.
 - `validate()` options: `clientIp`, `keepToken`, `expectedAction`,
   `expectedHostname` (string or list), and the identity fields `bindUid`,
   `bindAccount`, `bindEmail`, `bindPhone`, `scene`.

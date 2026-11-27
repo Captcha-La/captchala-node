@@ -48,7 +48,6 @@ CommonJS 写法：`const { CaptchaLaClient } = require('@captcha-la/node');`
 |---|---|---|
 | `appKey` | `process.env.CAPTCHALA_APP_KEY` | App Key（控制台获取） |
 | `appSecret` | `process.env.CAPTCHALA_APP_SECRET` | App Secret（控制台获取），仅限服务端 |
-| `baseUrl` | `https://verify.captcha.la` | API 地址 |
 | `timeoutMs` | `5000` | 单次请求超时（毫秒） |
 | `maxRetries` | `2` | 首次请求之后的重试次数（`0` 关闭重试） |
 | `retryBackoffMs` | `200` | 指数退避的基础间隔 |

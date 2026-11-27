@@ -48,7 +48,6 @@ CommonJS でも使えます：`const { CaptchaLaClient } = require('@captcha-la/
 |---|---|---|
 | `appKey` | `process.env.CAPTCHALA_APP_KEY` | App Key（ダッシュボードで取得） |
 | `appSecret` | `process.env.CAPTCHALA_APP_SECRET` | App Secret（ダッシュボードで取得）。サーバー側でのみ使用してください |
-| `baseUrl` | `https://verify.captcha.la` | API のベース URL |
 | `timeoutMs` | `5000` | 1 回の試行あたりのタイムアウト（ミリ秒） |
 | `maxRetries` | `2` | 初回試行後のリトライ回数（`0` で無効） |
 | `retryBackoffMs` | `200` | 指数バックオフの基準遅延 |

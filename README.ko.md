@@ -48,7 +48,6 @@ CommonJS도 사용할 수 있습니다: `const { CaptchaLaClient } = require('@c
 |---|---|---|
 | `appKey` | `process.env.CAPTCHALA_APP_KEY` | App Key(대시보드에서 확인) |
 | `appSecret` | `process.env.CAPTCHALA_APP_SECRET` | App Secret(대시보드에서 확인). 서버 측에서만 사용 |
-| `baseUrl` | `https://verify.captcha.la` | API 기본 URL |
 | `timeoutMs` | `5000` | 시도당 타임아웃(밀리초) |
 | `maxRetries` | `2` | 첫 시도 이후 재시도 횟수(`0`이면 비활성화) |
 | `retryBackoffMs` | `200` | 지수 백오프의 기본 지연 시간 |

@@ -19,6 +19,10 @@ async function closedPort() {
 }
 const hits = [];
 
+// The API URLs are fixed inside the SDK; route them to local servers through the real global fetch.
+const routed = (api, backup) => (url, init) =>
+  fetch(String(url).replace('https://verify.captcha.la', api).replace('https://fallbackapiv1.captchala.com', backup), init);
+
 before(async () => {
   server = createServer((req, res) => {
     let raw = '';
@@ -46,7 +50,7 @@ after(() => {
   server.close();
 });
 
-const client = (extra = {}) => new CaptchaLaClient({ appKey: 'k', appSecret: 's', baseUrl: base, retryBackoffMs: 0, ...extra });
+const client = (extra = {}) => new CaptchaLaClient({ appKey: 'k', appSecret: 's', fetch: routed(base, extra.backup ?? base), retryBackoffMs: 0, ...extra });
 
 describe('real fetch', () => {
   test('success and invalid', async () => {
@@ -72,7 +76,7 @@ describe('real fetch', () => {
   });
 
   test('connection refused is retried and flagged connectFailed', async () => {
-    const r = await new CaptchaLaClient({ appKey: 'k', appSecret: 's', baseUrl: closedA, retryBackoffMs: 0, maxRetries: 1 }).validate('pt_x');
+    const r = await new CaptchaLaClient({ appKey: 'k', appSecret: 's', fetch: routed(closedA, closedB), retryBackoffMs: 0, maxRetries: 1 }).validate('pt_x');
     assert.equal(r.error, 'request_failed');
     assert.ok(r.cause instanceof NetworkError);
     assert.equal(r.cause.connectFailed, true);
@@ -80,10 +84,10 @@ describe('real fetch', () => {
 
   test('client-only token accepted only when both endpoints are down', async () => {
     resetReachabilityCache();
-    const down = new CaptchaLaClient({ appKey: 'k', appSecret: 's', baseUrl: closedA, backupUrl: closedB });
+    const down = new CaptchaLaClient({ appKey: 'k', appSecret: 's', fetch: routed(closedA, closedB) });
     assert.equal((await down.validate('co_x')).valid, true);
     resetReachabilityCache();
-    const up = client({ backupUrl: closedB });
+    const up = client({ backup: closedB });
     assert.equal((await up.validate('co_x')).valid, false);
   });
 });

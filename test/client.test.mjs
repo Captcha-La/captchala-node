@@ -122,10 +122,10 @@ describe('validate', () => {
     });
   });
 
-  test('custom baseUrl', async () => {
+  test('validates against the CaptchaLa API and ignores unknown URL options', async () => {
     const f = mockFetch(ok(SUCCESS));
-    await make(f, { baseUrl: 'http://127.0.0.1:9999/' }).validate('pt_abc');
-    assert.equal(f.calls[0].url, 'http://127.0.0.1:9999/v1/validate');
+    await make(f, { baseUrl: 'http://127.0.0.1:9999/', backupUrl: 'https://backup.example' }).validate('pt_abc');
+    assert.equal(f.calls[0].url, 'https://verify.captcha.la/v1/validate');
   });
 
   test('invalid token is a clean failure without cause', async () => {
@@ -188,8 +188,8 @@ describe('validate', () => {
 
   test('offline_ tokens go to the backup service', async () => {
     const f = mockFetch(ok({ valid: true }));
-    const r = await make(f, { backupUrl: 'https://backup.example' }).validate('offline_abc');
-    assert.equal(f.calls[0].url, 'https://backup.example/api/validate');
+    const r = await make(f).validate('offline_abc');
+    assert.equal(f.calls[0].url, 'https://fallbackapiv1.captchala.com/api/validate');
     assert.equal(r.valid, true);
     assert.equal(r.offline, true);
   });
